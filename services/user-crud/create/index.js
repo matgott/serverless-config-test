@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports.handler = async (event) => {
-  const {User} = require("../utils/database/models/User");
+  const {User} = process.env.IS_OFFLINE ? require("../../utils/database/models/User") : require("../utils/database/models/User");
 
   let response = {statusCode: 0, body: undefined};
 

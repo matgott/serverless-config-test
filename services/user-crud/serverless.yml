@@ -25,8 +25,12 @@ provider:
 
 functions:
   createUser:
-    handler: create.handler
+    handler: create/index.handler
     vpc: ${self:custom.vpc}
+    package:
+      patterns:
+        - "create/**"
+        - "../utils/**"
 
     events:
       - http:
@@ -38,36 +42,55 @@ functions:
                 schema: ${file(../utils/database/models/User.js):SchemaValidator}
                 name: CreateUserModel
                 description: "Validation for User creation"
-  update:
-    handler: update.handler
+  updateUser:
+    handler: update/index.handler
+    vpc: ${self:custom.vpc}
+    package:
+      patterns:
+        - "update/**"
+        - "../utils/**"
     events:
       - http:
           path: users/{id}
           method: PUT
-  delete:
-    handler: delete.handler
+  deleteUser:
+    handler: delete/index.handler
+    vpc: ${self:custom.vpc}
+    package:
+      patterns:
+        - "delete/**"
+        - "../utils/**"
     events:
       - http:
           path: users/{id}
           method: DELETE
-  listUsers:
-    handler: findAll.handler
+  findAllUsers:
+    handler: findAll/index.handler
+    vpc: ${self:custom.vpc}
+    package:
+      patterns:
+        - "findAll/**"
+        - "../utils/**"
     events:
       - http:
           path: users/
           method: GET
-  listUser:
-    handler: findOne.handler
+  findOneUser:
+    handler: findOne/index.handler
+    vpc: ${self:custom.vpc}
+    package:
+      patterns:
+        - "findOne/**"
+        - "../utils/**"
     events:
       - http:
           path: users/{id}
           method: GET
 
 package:
+  individually: true
   patterns:
-    - "../../utils/database/**"
-    - "!node_modules/**"
-    - "!../../utils/database/node_modules/**"
+    - "!**/*"
 
 plugins:
   - serverless-offline
