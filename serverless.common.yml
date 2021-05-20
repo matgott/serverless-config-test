@@ -1,0 +1,23 @@
+custom:
+  myStage: ${opt:stage, 'local'}
+  variables:
+    local:
+      DB_USER: serverless
+      DB_PASSWORD: 15987532
+      DB_HOST: localhost
+      DB_DATABASE: serverless
+      DB_PORT: 6543
+    dev:
+      DB_USER: postgres
+      DB_PASSWORD: 15987532
+      DB_HOST: serverlessinstance.c2ndoyc0qnkj.us-west-2.rds.amazonaws.com
+      DB_DATABASE: serverless
+      DB_PORT: 5432
+
+provider:
+  environment:
+    DB_USER: ${self:custom.variables.${self:provider.stage}.DB_USER}
+    DB_PASSWORD: ${self:custom.variables.${self:provider.stage}.DB_PASSWORD}
+    DB_HOST: ${self:custom.variables.${self:provider.stage}.DB_HOST}
+    DB_DATABASE: ${self:custom.variables.${self:provider.stage}.DB_DATABASE}
+    DB_PORT: ${self:custom.variables.${self:provider.stage}.DB_PORT}

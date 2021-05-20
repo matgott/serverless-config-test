@@ -1,0 +1,73 @@
+service: user-crud
+# variablesResolutionMode: 20210326
+configValidationMode: off
+
+custom:
+  myStage: ${file(../../serverless.common.yml):custom.myStage}
+  variables: ${file(../../serverless.common.yml):custom.variables}
+  vpc:
+    securityGroupIds:
+      - sg-972c0eab
+    subnetIds:
+      - subnet-3be47166
+      - subnet-d47d70ff
+      - subnet-c03289b8
+      - subnet-3784207d
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: ${self:custom.myStage}
+  region: us-west-2
+  profile: serverless
+  environment: ${file(../../serverless.common.yml):provider.environment}
+
+functions:
+  createUser:
+    handler: create.handler
+    vpc: ${self:custom.vpc}
+
+    events:
+      - http:
+          path: users/
+          method: POST
+          request:
+            schemas:
+              application/json:
+                schema: ${file(../utils/database/models/User.js):SchemaValidator}
+                name: CreateUserModel
+                description: "Validation for User creation"
+  update:
+    handler: update.handler
+    events:
+      - http:
+          path: users/{id}
+          method: PUT
+  delete:
+    handler: delete.handler
+    events:
+      - http:
+          path: users/{id}
+          method: DELETE
+  listUsers:
+    handler: findAll.handler
+    events:
+      - http:
+          path: users/
+          method: GET
+  listUser:
+    handler: findOne.handler
+    events:
+      - http:
+          path: users/{id}
+          method: GET
+
+package:
+  patterns:
+    - "../../utils/database/**"
+    - "!node_modules/**"
+    - "!../../utils/database/node_modules/**"
+
+plugins:
+  - serverless-offline
